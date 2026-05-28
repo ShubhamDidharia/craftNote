@@ -1,131 +1,164 @@
 import React from 'react';
+import { Pin, PinOff, Trash2, StickyNote } from 'lucide-react';
 import { noteService } from '../services/noteService';
+import { showToast } from '../utils/toast';
+import { getNoteThemeStyle, getThemeById, resolveNoteThemeId } from '../constants/colorThemes';
 
-export const NoteList = ({ notes, workspaceId, onNoteDeleted, onNoteUpdated }) => {
-  const handleDelete = async (noteId) => {
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      try {
-        await noteService.deleteNote(noteId);
-        if (onNoteDeleted) {
-          onNoteDeleted(noteId);
-        }
-      } catch (err) {
-        alert(err.message || 'Failed to delete note');
-      }
+export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated }) => {
+  const handleDelete = async (e, noteId) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+
+    try {
+      await noteService.deleteNote(noteId);
+      showToast.success('Note deleted');
+      onNoteDeleted?.(noteId);
+    } catch (err) {
+      showToast.error(err.message || 'Failed to delete note');
     }
   };
 
-  const handleTogglePin = async (note) => {
+  const handleTogglePin = async (e, note) => {
+    e.stopPropagation();
     try {
       const response = await noteService.togglePinNote(note._id);
-      if (onNoteUpdated) {
-        onNoteUpdated(response.note);
-      }
+      showToast.success(response.note.isPinned ? 'Note pinned' : 'Note unpinned');
+      onNoteUpdated?.(response.note);
     } catch (err) {
-      alert(err.message || 'Failed to pin note');
+      showToast.error(err.message || 'Failed to update pin');
     }
   };
 
   if (notes.length === 0) {
     return (
       <div className="text-center py-20 bg-bg-surface rounded-xl border-2 border-dashed border-gray-200">
-        <div className="text-6xl mb-4">📝</div>
+        <StickyNote size={48} className="mx-auto text-gray-300 mb-4" strokeWidth={1.5} />
         <p className="m-0 mb-2 text-base text-text-secondary">No notes in this workspace yet</p>
         <p className="text-sm text-gray-400">Create your first note to get started</p>
       </div>
     );
   }
 
-  // Separate pinned and unpinned notes
   const pinnedNotes = notes.filter((note) => note.isPinned);
   const unpinnedNotes = notes.filter((note) => !note.isPinned);
+
+  const renderGrid = (list) => (
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+      {list.map((note) => (
+        <NoteCard
+          key={note._id}
+          note={note}
+          onClick={() => onNoteClick?.(note)}
+          onDelete={(e) => handleDelete(e, note._id)}
+          onTogglePin={(e) => handleTogglePin(e, note)}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-8">
       {pinnedNotes.length > 0 && (
         <div className="flex flex-col gap-4">
-          <h3 className="m-0 text-base font-semibold text-gray-700 py-3 border-b-2 border-gray-200">📌 Pinned Notes</h3>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
-            {pinnedNotes.map((note) => (
-              <NoteCard
-                key={note._id}
-                note={note}
-                onDelete={handleDelete}
-                onTogglePin={handleTogglePin}
-              />
-            ))}
-          </div>
+          <h3 className="m-0 text-base font-semibold text-gray-700 py-3 border-b-2 border-gray-200 flex items-center gap-2">
+            <Pin size={16} />
+            Pinned Notes
+          </h3>
+          {renderGrid(pinnedNotes)}
         </div>
       )}
-
       {unpinnedNotes.length > 0 && (
         <div className="flex flex-col gap-4">
-          <h3 className="m-0 text-base font-semibold text-gray-700 py-3 border-b-2 border-gray-200">All Notes</h3>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
-            {unpinnedNotes.map((note) => (
-              <NoteCard
-                key={note._id}
-                note={note}
-                onDelete={handleDelete}
-                onTogglePin={handleTogglePin}
-              />
-            ))}
-          </div>
+          <h3 className="m-0 text-base font-semibold text-gray-700 py-3 border-b-2 border-gray-200">
+            All Notes
+          </h3>
+          {renderGrid(unpinnedNotes)}
         </div>
       )}
     </div>
   );
 };
 
-const NoteCard = ({ note, onDelete, onTogglePin }) => {
-  const contentPreview = note.content
-    .substring(0, 100)
-    .replace(/\n/g, ' ');
-  const hasMore = note.content.length > 100;
+const NoteCard = ({ note, onClick, onDelete, onTogglePin }) => {
+  const theme = getThemeById(resolveNoteThemeId(note));
+  const themeStyle = getNoteThemeStyle(note);
+  const contentPreview = (note.content || '').substring(0, 100).replace(/\n/g, ' ');
+  const hasMore = (note.content || '').length > 100;
 
   return (
-    <div className="bg-yellow-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all border-2 border-transparent hover:border-black/10 flex flex-col gap-3" style={{ backgroundColor: note.color }}>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
+      className="rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all border flex flex-col gap-3 cursor-pointer text-left"
+      style={{
+        ...themeStyle,
+        borderColor: theme.border,
+      }}
+    >
       <div className="flex justify-between items-start gap-2">
-        <h4 className="m-0 text-base font-semibold text-gray-800 leading-relaxed word-break break-word flex-1">{note.title}</h4>
+        <h4 className="m-0 text-base font-semibold leading-relaxed break-words flex-1" style={{ color: theme.text }}>
+          {note.title}
+        </h4>
         <button
-          className="bg-none border-none text-lg cursor-pointer p-1 flex-shrink-0 transition-all hover:scale-120"
-          onClick={() => onTogglePin(note)}
+          type="button"
+          className="p-1.5 rounded-md flex-shrink-0 transition-all"
+          style={{ backgroundColor: theme.tagBg }}
+          onClick={onTogglePin}
           title={note.isPinned ? 'Unpin note' : 'Pin note'}
         >
-          {note.isPinned ? '📌' : '📍'}
+          {note.isPinned ? (
+            <Pin size={16} style={{ color: theme.text }} />
+          ) : (
+            <PinOff size={16} style={{ color: theme.muted }} />
+          )}
         </button>
       </div>
 
       {note.content && (
-        <div className="text-sm text-gray-600 leading-relaxed min-h-[30px] max-h-[60px] overflow-hidden">
+        <div className="text-sm leading-relaxed max-h-[60px] overflow-hidden" style={{ color: theme.muted }}>
           {contentPreview}
           {hasMore && '...'}
         </div>
       )}
 
-      {note.tags.length > 0 && (
-        <div className="flex gap-1.5 flex-wrap min-h-0">
+      {note.tags?.length > 0 && (
+        <div className="flex gap-1.5 flex-wrap">
           {note.tags.slice(0, 3).map((tag, idx) => (
-            <span key={idx} className="inline-block bg-black/10 text-gray-700 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap">
+            <span
+              key={idx}
+              className="inline-block px-2 py-0.5 rounded text-xs font-medium"
+              style={{ backgroundColor: theme.tagBg, color: theme.text }}
+            >
               #{tag}
             </span>
           ))}
           {note.tags.length > 3 && (
-            <span className="inline-block bg-black/10 text-gray-700 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap">+{note.tags.length - 3}</span>
+            <span
+              className="inline-block px-2 py-0.5 rounded text-xs font-medium"
+              style={{ backgroundColor: theme.tagBg, color: theme.text }}
+            >
+              +{note.tags.length - 3}
+            </span>
           )}
         </div>
       )}
 
-      <div className="flex justify-between items-center pt-2 border-t border-black/10">
-        <span className="text-xs text-gray-500">
+      <div
+        className="flex justify-between items-center pt-2 border-t"
+        style={{ borderColor: theme.border }}
+      >
+        <span className="text-xs" style={{ color: theme.muted }}>
           {new Date(note.createdAt).toLocaleDateString()}
         </span>
         <button
-          className="bg-none border-none text-base cursor-pointer p-1 transition-all hover:scale-120 hover:brightness-75"
-          onClick={() => onDelete(note._id)}
+          type="button"
+          className="p-1.5 rounded-md hover:bg-red-100 text-red-600 transition-all"
+          onClick={onDelete}
           title="Delete note"
         >
-          🗑️
+          <Trash2 size={16} />
         </button>
       </div>
     </div>

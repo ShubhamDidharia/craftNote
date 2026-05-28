@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { authService } from '../services/authService';
 import { validateSigninForm } from '../utils/validation';
+import { showToast } from '../utils/toast';
 
 export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -60,7 +61,9 @@ export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
 
       onClose();
     } catch (error) {
-      setServerError(error.message || 'An error occurred during signin');
+      const msg = error.message || 'An error occurred during signin';
+      setServerError(msg);
+      showToast.error(msg);
     } finally {
       setLoading(false);
     }

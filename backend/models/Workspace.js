@@ -20,10 +20,9 @@ const workspaceSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    color: {
+    colorTheme: {
       type: String,
-      default: '#667eea',
-      match: [/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Please provide a valid hex color'],
+      default: 'classic',
     },
     notes: [
       {

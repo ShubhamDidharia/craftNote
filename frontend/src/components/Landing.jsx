@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
+import {
+  FileText,
+  Search,
+  Users,
+  Smartphone,
+  Shield,
+  Zap,
+} from 'lucide-react';
 import { SignupModal } from './SignupModal';
 import { SigninModal } from './SigninModal';
+
+const FEATURES = [
+  { icon: FileText, title: 'Easy Note Taking', desc: 'Capture your thoughts quickly with our intuitive note editor. Format text, add images, and organize with tags.' },
+  { icon: Search, title: 'Smart Search', desc: 'Find any note instantly with powerful search capabilities. Filter by tags, dates, and keywords.' },
+  { icon: Users, title: 'Collaborate', desc: 'Share notes and collaborate in real-time with team members. Leave comments and track changes.' },
+  { icon: Smartphone, title: 'Access Anywhere', desc: 'Your notes are synced across all devices. Access them anytime, anywhere, online or offline.' },
+  { icon: Shield, title: 'Secure & Private', desc: 'Your data is encrypted and secure. Only you and those you share with can access your notes.' },
+  { icon: Zap, title: 'Lightning Fast', desc: 'Optimized performance ensures quick loading and smooth editing experience even with large notes.' },
+];
 
 export const Landing = ({ onAuthSuccess }) => {
   const [showSignup, setShowSignup] = useState(false);
@@ -59,20 +76,20 @@ export const Landing = ({ onAuthSuccess }) => {
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: '📝', title: 'Easy Note Taking', desc: 'Capture your thoughts quickly with our intuitive note editor. Format text, add images, and organize with tags.' },
-              { icon: '🔍', title: 'Smart Search', desc: 'Find any note instantly with powerful search capabilities. Filter by tags, dates, and keywords.' },
-              { icon: '🤝', title: 'Collaborate', desc: 'Share notes and collaborate in real-time with team members. Leave comments and track changes.' },
-              { icon: '📱', title: 'Access Anywhere', desc: 'Your notes are synced across all devices. Access them anytime, anywhere, online or offline.' },
-              { icon: '🔒', title: 'Secure & Private', desc: 'Your data is encrypted and secure. Only you and those you share with can access your notes.' },
-              { icon: '⚡', title: 'Lightning Fast', desc: 'Optimized performance ensures quick loading and smooth editing experience even with large notes.' },
-            ].map((feature, idx) => (
+            {FEATURES.map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
               <div key={idx} className="card p-8 text-center hover:shadow-lg transform hover:scale-105 transition-all">
-                <div className="text-5xl mb-4">{feature.icon}</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <Icon size={28} className="text-accent" strokeWidth={1.75} />
+                  </div>
+                </div>
                 <h3 className="text-xl font-bold text-text-primary mb-3">{feature.title}</h3>
                 <p className="text-text-secondary">{feature.desc}</p>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>

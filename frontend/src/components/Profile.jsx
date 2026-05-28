@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { Pencil, Trash2, LayoutGrid, ChevronRight } from 'lucide-react';
 import { authService } from '../services/authService';
 import { workspaceService } from '../services/workspaceService';
+import { showToast } from '../utils/toast';
+import { WorkspaceFormModal } from './WorkspaceFormModal';
+import {
+  getThemeById,
+  getThemeSwatchStyle,
+  resolveWorkspaceThemeId,
+} from '../constants/colorThemes';
 
 export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWorkspace }) => {
   const [workspaces, setWorkspaces] = useState([]);
   const [loadingWorkspaces, setLoadingWorkspaces] = useState(true);
   const [workspaceError, setWorkspaceError] = useState('');
+  const [editingWorkspace, setEditingWorkspace] = useState(null);
+  const [workspaceSubmitting, setWorkspaceSubmitting] = useState(false);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -82,13 +92,33 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
 
     try {
       await authService.deleteAccount(deletePassword);
-      if (onAccountDeleted) {
-        onAccountDeleted();
-      }
+      showToast.success('Account deleted');
+      onAccountDeleted?.();
     } catch (err) {
       setDeleteError(err.message || 'Failed to delete account');
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  const handleEditWorkspace = async (formData) => {
+    if (!editingWorkspace) return;
+    setWorkspaceSubmitting(true);
+    try {
+      const response = await workspaceService.updateWorkspace(editingWorkspace._id, {
+        name: formData.name.trim(),
+        description: formData.description,
+        colorTheme: formData.colorTheme,
+      });
+      setWorkspaces((prev) =>
+        prev.map((w) => (w._id === response.workspace._id ? response.workspace : w))
+      );
+      setEditingWorkspace(null);
+      showToast.success('Workspace updated');
+    } catch (err) {
+      showToast.error(err.message || 'Failed to update workspace');
+    } finally {
+      setWorkspaceSubmitting(false);
     }
   };
 
@@ -101,8 +131,9 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
     try {
       await workspaceService.deleteWorkspace(workspaceId);
       setWorkspaces((prev) => prev.filter((w) => w._id !== workspaceId));
+      showToast.success('Workspace deleted');
     } catch (err) {
-      setWorkspaceError(err.message || 'Failed to delete workspace');
+      showToast.error(err.message || 'Failed to delete workspace');
     }
   };
 
@@ -144,14 +175,18 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
 
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="m-0 text-base font-semibold text-text-primary">My Workspaces</h4>
+            <h4 className="m-0 text-base font-semibold text-text-primary flex items-center gap-2">
+              <LayoutGrid size={18} />
+              My Workspaces
+            </h4>
             {onNavigateToWorkspace && (
               <button
                 type="button"
-                className="text-sm text-accent font-semibold hover:underline"
+                className="inline-flex items-center gap-1 text-sm text-accent font-semibold hover:underline"
                 onClick={onNavigateToWorkspace}
               >
-                Manage in Workspace →
+                Manage in Workspace
+                <ChevronRight size={16} />
               </button>
             )}
           </div>
@@ -170,34 +205,47 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
             </p>
           ) : (
             <ul className="list-none m-0 p-0 flex flex-col gap-3">
-              {workspaces.map((workspace) => (
-                <li
-                  key={workspace._id}
-                  className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg bg-bg-main"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span
-                      className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: workspace.color || '#667eea' }}
-                    />
-                    <div className="min-w-0">
-                      <p className="m-0 font-semibold text-text-primary truncate">{workspace.name}</p>
-                      {workspace.description && (
-                        <p className="m-0 text-xs text-gray-500 truncate mt-1">
-                          {workspace.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="text-xs px-3 py-1.5 text-red-600 border border-red-200 rounded-md hover:bg-red-50 flex-shrink-0"
-                    onClick={() => handleDeleteWorkspace(workspace._id, workspace.name)}
+              {workspaces.map((workspace) => {
+                const themeId = resolveWorkspaceThemeId(workspace);
+                const theme = getThemeById(themeId);
+                return (
+                  <li
+                    key={workspace._id}
+                    className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg bg-bg-main"
                   >
-                    Delete
-                  </button>
-                </li>
-              ))}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className="w-9 h-9 rounded-md flex-shrink-0 flex items-center justify-center text-[10px] font-bold"
+                        style={getThemeSwatchStyle(themeId)}
+                      >
+                        Aa
+                      </span>
+                      <div className="min-w-0">
+                        <p className="m-0 font-semibold text-text-primary truncate">{workspace.name}</p>
+                        <p className="m-0 text-xs text-gray-500 mt-0.5">{theme.name} theme</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50"
+                        onClick={() => setEditingWorkspace(workspace)}
+                      >
+                        <Pencil size={12} />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 text-red-600 border border-red-200 rounded-md hover:bg-red-50"
+                        onClick={() => handleDeleteWorkspace(workspace._id, workspace.name)}
+                      >
+                        <Trash2 size={12} />
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -207,20 +255,22 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              className="px-5 py-2.5 border-2 border-gray-200 bg-bg-surface rounded-lg text-sm font-semibold cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+              className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-gray-200 bg-bg-surface rounded-lg text-sm font-semibold hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
               onClick={openEditModal}
             >
+              <Pencil size={16} />
               Edit Details
             </button>
             <button
               type="button"
-              className="px-5 py-2.5 border-2 border-red-200 bg-red-50 rounded-lg text-sm font-semibold cursor-pointer transition-all hover:bg-red-100 hover:border-red-300 text-red-700"
+              className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-red-200 bg-red-50 rounded-lg text-sm font-semibold hover:bg-red-100 hover:border-red-300 text-red-700 transition-all"
               onClick={() => {
                 setDeletePassword('');
                 setDeleteError('');
                 setShowDeleteModal(true);
               }}
             >
+              <Trash2 size={16} />
               Delete Account
             </button>
           </div>
@@ -289,6 +339,23 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
           </div>
         </div>
       )}
+
+      <WorkspaceFormModal
+        isOpen={Boolean(editingWorkspace)}
+        onClose={() => setEditingWorkspace(null)}
+        onSubmit={handleEditWorkspace}
+        initialData={
+          editingWorkspace
+            ? {
+                name: editingWorkspace.name,
+                description: editingWorkspace.description,
+                colorTheme: resolveWorkspaceThemeId(editingWorkspace),
+              }
+            : null
+        }
+        mode="edit"
+        loading={workspaceSubmitting}
+      />
 
       {showDeleteModal && (
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>

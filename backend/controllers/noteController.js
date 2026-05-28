@@ -1,12 +1,13 @@
 const Note = require('../models/Note');
 const Workspace = require('../models/Workspace');
+const { normalizeThemeId } = require('../constants/colorThemes');
 
 // @route   POST /api/notes
 // @desc    Create a new note
 // @access  Private
 exports.createNote = async (req, res) => {
   try {
-    const { title, content, workspaceId, tags, color } = req.body;
+    const { title, content, workspaceId, tags, colorTheme } = req.body;
     const userId = req.user.id;
 
     // Validation
@@ -24,6 +25,8 @@ exports.createNote = async (req, res) => {
       return res.status(403).json({ error: 'Workspace not found or not authorized' });
     }
 
+    const noteTheme = normalizeThemeId(colorTheme || workspace.colorTheme);
+
     // Create note
     const note = new Note({
       title,
@@ -31,7 +34,7 @@ exports.createNote = async (req, res) => {
       userId,
       workspaceId,
       tags: tags || [],
-      color: color || '#fef3c7',
+      colorTheme: noteTheme,
     });
 
     await note.save();
@@ -108,7 +111,7 @@ exports.getNote = async (req, res) => {
 exports.updateNote = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, tags, isPinned, color } = req.body;
+    const { title, content, tags, isPinned, colorTheme } = req.body;
     const userId = req.user.id;
 
     let note = await Note.findById(id);
@@ -127,7 +130,7 @@ exports.updateNote = async (req, res) => {
     if (content !== undefined) note.content = content;
     if (tags !== undefined) note.tags = tags;
     if (isPinned !== undefined) note.isPinned = isPinned;
-    if (color !== undefined) note.color = color;
+    if (colorTheme !== undefined) note.colorTheme = normalizeThemeId(colorTheme);
 
     await note.save();
 

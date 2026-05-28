@@ -33,9 +33,9 @@ const noteSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    color: {
+    colorTheme: {
       type: String,
-      default: '#fef3c7',
+      default: 'classic',
     },
   },
   {

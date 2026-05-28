@@ -1,12 +1,13 @@
 const Workspace = require('../models/Workspace');
 const Note = require('../models/Note');
+const { normalizeThemeId, DEFAULT_THEME_ID } = require('../constants/colorThemes');
 
 // @route   POST /api/workspaces
 // @desc    Create a new workspace
 // @access  Private
 exports.createWorkspace = async (req, res) => {
   try {
-    const { name, description, color } = req.body;
+    const { name, description, colorTheme } = req.body;
     const userId = req.user.id;
 
     // Validation
@@ -18,7 +19,7 @@ exports.createWorkspace = async (req, res) => {
     const workspace = new Workspace({
       name,
       description: description || '',
-      color: color || '#667eea',
+      colorTheme: normalizeThemeId(colorTheme),
       userId,
     });
 
@@ -86,7 +87,7 @@ exports.getWorkspace = async (req, res) => {
 exports.updateWorkspace = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, color, isDefault } = req.body;
+    const { name, description, colorTheme, isDefault } = req.body;
     const userId = req.user.id;
 
     let workspace = await Workspace.findById(id);
@@ -103,7 +104,9 @@ exports.updateWorkspace = async (req, res) => {
     // Update fields
     if (name) workspace.name = name;
     if (description !== undefined) workspace.description = description;
-    if (color) workspace.color = color;
+    if (colorTheme !== undefined) {
+      workspace.colorTheme = normalizeThemeId(colorTheme);
+    }
     if (isDefault !== undefined) workspace.isDefault = isDefault;
 
     await workspace.save();

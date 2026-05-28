@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Landing } from './components/Landing';
 import { Navbar } from './components/Navbar';
 import { Home } from './components/Home';
 import { Workspace } from './components/Workspace';
 import { Profile } from './components/Profile';
-import { CreateNotePage } from './components/CreateNotePage';
+import { NoteEditorPage } from './components/NoteEditorPage';
 import { authService } from './services/authService';
+import { showToast } from './utils/toast';
 import './App.css';
 
 function App() {
@@ -13,8 +15,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('home');
-  const [createNoteMode, setCreateNoteMode] = useState(false);
-  const [selectedWorkspace, setSelectedWorkspace] = useState(null);
+  const [noteEditor, setNoteEditor] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -40,8 +41,6 @@ function App() {
             authService.logout();
             setUser(null);
             setIsAuthenticated(false);
-          } else {
-            console.warn('Auth refresh skipped (server unreachable):', error.message);
           }
         }
       } catch (error) {
@@ -61,7 +60,7 @@ function App() {
     setUser(userData);
     setIsAuthenticated(true);
     setCurrentTab('home');
-    console.log(`User ${authType} successful:`, userData);
+    showToast.success(authType === 'signup' ? 'Account created successfully!' : 'Signed in successfully!');
   };
 
   const handleLogout = () => {
@@ -69,54 +68,70 @@ function App() {
     setUser(null);
     setIsAuthenticated(false);
     setCurrentTab('home');
-    setCreateNoteMode(false);
-    setSelectedWorkspace(null);
+    setNoteEditor(null);
   };
 
-  const handleCreateNote = (workspaceId, workspaceName) => {
-    setSelectedWorkspace({ _id: workspaceId, name: workspaceName });
-    setCreateNoteMode(true);
+  const handleCreateNote = (workspaceId, workspaceName, colorTheme) => {
+    setNoteEditor({ mode: 'create', workspaceId, workspaceName, colorTheme });
   };
 
-  const handleNoteSaved = (newNote) => {
-    setCreateNoteMode(false);
-    setSelectedWorkspace(null);
-    setCurrentTab('workspace');
+  const handleEditNote = (note, workspaceName) => {
+    setNoteEditor({
+      mode: 'edit',
+      workspaceId: note.workspaceId,
+      workspaceName: workspaceName || 'Workspace',
+      note,
+    });
   };
 
-  const handleCancelCreateNote = () => {
-    setCreateNoteMode(false);
-    setSelectedWorkspace(null);
+  const handleNoteSaved = () => {
+    const wasCreate = noteEditor?.mode === 'create';
+    setNoteEditor(null);
+    if (wasCreate) {
+      setCurrentTab('workspace');
+    }
   };
 
-  const renderContent = () => {
-    if (createNoteMode && selectedWorkspace) {
+  const handleCancelNoteEditor = () => {
+    setNoteEditor(null);
+  };
+
+  const renderMainContent = () => {
+    if (noteEditor) {
       return (
-        <CreateNotePage
-          workspaceId={selectedWorkspace._id}
-          workspaceName={selectedWorkspace.name}
-          onNoteSaved={handleNoteSaved}
-          onCancel={handleCancelCreateNote}
+        <NoteEditorPage
+          mode={noteEditor.mode}
+          workspaceId={noteEditor.workspaceId}
+          workspaceName={noteEditor.workspaceName}
+          colorTheme={noteEditor.colorTheme}
+          note={noteEditor.note}
+          onSaved={handleNoteSaved}
+          onCancel={handleCancelNoteEditor}
         />
       );
     }
 
     switch (currentTab) {
       case 'home':
-        return <Home user={user} />;
+        return <Home user={user} onEditNote={handleEditNote} />;
       case 'workspace':
-        return <Workspace onCreateNote={handleCreateNote} />;
+        return (
+          <Workspace onCreateNote={handleCreateNote} onEditNote={handleEditNote} />
+        );
       case 'profile':
         return (
           <Profile
             user={user}
-            onUserUpdated={setUser}
+            onUserUpdated={(updated) => {
+              setUser(updated);
+              showToast.success('Profile updated successfully');
+            }}
             onAccountDeleted={handleLogout}
             onNavigateToWorkspace={() => setCurrentTab('workspace')}
           />
         );
       default:
-        return <Home user={user} />;
+        return <Home user={user} onEditNote={handleEditNote} />;
     }
   };
 
@@ -128,28 +143,39 @@ function App() {
     );
   }
 
-  // If authenticated, show main app with navbar
   if (isAuthenticated && user) {
     return (
       <div className="w-full min-h-screen bg-bg-main flex flex-col">
-        {!createNoteMode && (
-          <Navbar
-            user={user}
-            currentTab={currentTab}
-            onTabChange={setCurrentTab}
-            onLogout={handleLogout}
-          />
-        )}
-        <main className={`flex-1 ${createNoteMode ? 'p-0' : ''}`}>
-          {renderContent()}
-        </main>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              background: '#fff',
+              color: '#212529',
+              borderRadius: '10px',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+            },
+            success: { iconTheme: { primary: '#9E1B32', secondary: '#fff' } },
+          }}
+        />
+        <Navbar
+          user={user}
+          currentTab={currentTab}
+          onTabChange={(tab) => {
+            setNoteEditor(null);
+            setCurrentTab(tab);
+          }}
+          onLogout={handleLogout}
+        />
+        <main className="flex-1">{renderMainContent()}</main>
       </div>
     );
   }
 
-  // If not authenticated, show landing page with auth modals
   return (
     <div className="w-full min-h-screen">
+      <Toaster position="top-right" />
       <Landing onAuthSuccess={handleAuthSuccess} />
     </div>
   );
