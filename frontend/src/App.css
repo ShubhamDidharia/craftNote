@@ -16,63 +16,11 @@
 
 .App.authenticated {
   background-color: #f9fafb;
-}
-
-.app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.app-header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.logout-btn {
-  padding: 10px 20px;
-  background-color: white;
-  color: #667eea;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.logout-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .app-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.app-main p {
-  font-size: 16px;
-  color: #6b7280;
-  line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-  .app-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .app-header h1 {
-    font-size: 24px;
-  }
-
-  .logout-btn {
-    align-self: flex-end;
-  }
+  flex: 1;
 }

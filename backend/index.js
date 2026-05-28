@@ -28,9 +28,14 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to CraftNote API' });
 });
 
-// Import auth routes
+// Import routes
 const authRoutes = require('./routes/auth');
+const workspaceRoutes = require('./routes/workspaces');
+const noteRoutes = require('./routes/notes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/workspaces', workspaceRoutes);
+app.use('/api/notes', noteRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
