@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { noteService } from '../services/noteService';
 import { NoteList } from './NoteList';
-import '../styles/Home.css';
 
 export const Home = ({ user }) => {
   const [allNotes, setAllNotes] = useState([]);
@@ -45,20 +44,20 @@ export const Home = ({ user }) => {
   };
 
   return (
-    <div className="home-container">
-      <div className="home-header">
-        <h2>Welcome back, {user.firstName}!</h2>
-        <p>Your latest notes from all workspaces</p>
+    <div className="max-w-[1200px] mx-auto px-5 py-10">
+      <div className="mb-10 text-center">
+        <h2 className="m-0 mb-2 text-3xl font-bold text-text-primary">Welcome back, {user.firstName}!</h2>
+        <p className="m-0 text-base text-text-secondary">Your latest notes from all workspaces</p>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="bg-red-100 text-red-600 p-4 rounded-lg border border-red-300 text-sm mb-5">{error}</div>}
 
-      <div className="home-content">
+      <div className="flex flex-col gap-10">
         {loading ? (
-          <div className="loading-state">Loading your notes...</div>
+          <div className="text-center py-16 text-base text-text-secondary">Loading your notes...</div>
         ) : allNotes.length > 0 ? (
-          <div className="all-notes-section">
-            <h3 className="section-title">📝 All Your Notes</h3>
+          <div className="flex flex-col gap-5">
+            <h3 className="m-0 text-lg font-semibold text-text-primary py-3 border-b-2 border-gray-200">📝 All Your Notes</h3>
             <NoteList
               notes={allNotes}
               onNoteDeleted={handleNoteDeleted}
@@ -66,40 +65,40 @@ export const Home = ({ user }) => {
             />
           </div>
         ) : (
-          <div className="empty-state-full">
-            <div className="empty-icon">📝</div>
-            <p>No notes yet</p>
-            <p className="empty-hint">
+          <div className="text-center py-20 bg-bg-surface rounded-xl border-2 border-dashed border-gray-200">
+            <div className="text-6xl mb-4">📝</div>
+            <p className="m-0 mb-2 text-base text-text-secondary">No notes yet</p>
+            <p className="text-sm text-gray-400">
               Go to Workspaces to create your first note!
             </p>
           </div>
         )}
 
         {!loading && allNotes.length === 0 && (
-          <div className="getting-started-guide">
-            <h3>How to Get Started</h3>
-            <div className="guide-steps">
-              <div className="guide-step">
-                <span className="step-number">1</span>
-                <div className="step-content">
-                  <h4>Create a Workspace</h4>
-                  <p>Go to the Workspace tab to create your first workspace</p>
+          <div className="bg-bg-surface rounded-xl p-8 shadow-sm">
+            <h3 className="m-0 mb-6 text-xl font-semibold text-text-primary">How to Get Started</h3>
+            <div className="flex flex-col gap-5">
+              <div className="flex gap-4 items-start">
+                <span className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-accent to-accent/80 text-white rounded-full text-base font-bold flex-shrink-0">1</span>
+                <div className="flex-1">
+                  <h4 className="m-0 mb-1.5 text-base font-semibold text-text-primary">Create a Workspace</h4>
+                  <p className="m-0 text-sm text-text-secondary leading-relaxed">Go to the Workspace tab to create your first workspace</p>
                 </div>
               </div>
 
-              <div className="guide-step">
-                <span className="step-number">2</span>
-                <div className="step-content">
-                  <h4>Add Notes</h4>
-                  <p>Click "Create New Note" to start writing in your workspace</p>
+              <div className="flex gap-4 items-start">
+                <span className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-accent to-accent/80 text-white rounded-full text-base font-bold flex-shrink-0">2</span>
+                <div className="flex-1">
+                  <h4 className="m-0 mb-1.5 text-base font-semibold text-text-primary">Add Notes</h4>
+                  <p className="m-0 text-sm text-text-secondary leading-relaxed">Click "Create New Note" to start writing in your workspace</p>
                 </div>
               </div>
 
-              <div className="guide-step">
-                <span className="step-number">3</span>
-                <div className="step-content">
-                  <h4>Organize & View</h4>
-                  <p>All your notes will appear here sorted by latest activity</p>
+              <div className="flex gap-4 items-start">
+                <span className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-accent to-accent/80 text-white rounded-full text-base font-bold flex-shrink-0">3</span>
+                <div className="flex-1">
+                  <h4 className="m-0 mb-1.5 text-base font-semibold text-text-primary">Organize & View</h4>
+                  <p className="m-0 text-sm text-text-secondary leading-relaxed">All your notes will appear here sorted by latest activity</p>
                 </div>
               </div>
             </div>

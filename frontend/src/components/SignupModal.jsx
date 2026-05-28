@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { authService } from '../services/authService';
 import { validateSignupForm } from '../utils/validation';
-import '../styles/AuthModal.css';
 
 export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -81,19 +80,28 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Create Account</h2>
-          <button className="modal-close-btn" onClick={onClose}>
+        <div className="flex justify-between items-center pb-6 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-text-primary">Create Account</h2>
+          <button
+            className="text-text-secondary hover:text-accent text-xl transition-colors"
+            onClick={onClose}
+          >
             ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {serverError && <div className="form-error-message">{serverError}</div>}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {serverError && (
+            <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+              {serverError}
+            </div>
+          )}
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name *</label>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium text-text-primary mb-1">
+                First Name *
+              </label>
               <input
                 type="text"
                 id="firstName"
@@ -101,15 +109,17 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
                 value={formData.firstName}
                 onChange={handleChange}
                 placeholder="John"
-                className={errors.firstName ? 'input-error' : ''}
+                className={`input w-full ${errors.firstName ? 'border-red-500' : ''}`}
               />
               {errors.firstName && (
-                <span className="field-error">{errors.firstName}</span>
+                <span className="text-red-500 text-xs mt-1 inline-block">{errors.firstName}</span>
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name *</label>
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-text-primary mb-1">
+                Last Name *
+              </label>
               <input
                 type="text"
                 id="lastName"
@@ -117,16 +127,18 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
                 value={formData.lastName}
                 onChange={handleChange}
                 placeholder="Doe"
-                className={errors.lastName ? 'input-error' : ''}
+                className={`input w-full ${errors.lastName ? 'border-red-500' : ''}`}
               />
               {errors.lastName && (
-                <span className="field-error">{errors.lastName}</span>
+                <span className="text-red-500 text-xs mt-1 inline-block">{errors.lastName}</span>
               )}
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1">
+              Email Address *
+            </label>
             <input
               type="email"
               id="email"
@@ -134,13 +146,17 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.email}
               onChange={handleChange}
               placeholder="john@example.com"
-              className={errors.email ? 'input-error' : ''}
+              className={`input w-full ${errors.email ? 'border-red-500' : ''}`}
             />
-            {errors.email && <span className="field-error">{errors.email}</span>}
+            {errors.email && (
+              <span className="text-red-500 text-xs mt-1 inline-block">{errors.email}</span>
+            )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password *</label>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-text-primary mb-1">
+              Password *
+            </label>
             <input
               type="password"
               id="password"
@@ -148,15 +164,17 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              className={errors.password ? 'input-error' : ''}
+              className={`input w-full ${errors.password ? 'border-red-500' : ''}`}
             />
             {errors.password && (
-              <span className="field-error">{errors.password}</span>
+              <span className="text-red-500 text-xs mt-1 inline-block">{errors.password}</span>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password *</label>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-primary mb-1">
+              Confirm Password *
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -164,29 +182,28 @@ export const SignupModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
-              className={errors.confirmPassword ? 'input-error' : ''}
+              className={`input w-full ${errors.confirmPassword ? 'border-red-500' : ''}`}
             />
             {errors.confirmPassword && (
-              <span className="field-error">{errors.confirmPassword}</span>
+              <span className="text-red-500 text-xs mt-1 inline-block">{errors.confirmPassword}</span>
             )}
           </div>
 
           <button
             type="submit"
-            className="submit-btn"
             disabled={loading}
+            className="btn-primary w-full mt-6 disabled:opacity-50"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
-        <p className="form-footer-text">
+        <p className="text-center text-sm text-text-secondary mt-4">
           Already have an account?{' '}
           <button
-            className="link-btn"
+            className="text-accent font-semibold hover:underline"
             onClick={() => {
               onClose();
-              // This will be handled by parent component
             }}
           >
             Sign In

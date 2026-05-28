@@ -90,13 +90,17 @@ function App() {
   };
 
   if (loading) {
-    return <div className="App loading">Loading...</div>;
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-bg-main">
+        <div className="text-lg text-accent font-medium">Loading...</div>
+      </div>
+    );
   }
 
   // If authenticated, show main app with navbar
   if (isAuthenticated && user) {
     return (
-      <div className="App authenticated">
+      <div className="w-full min-h-screen bg-bg-main flex flex-col">
         {!createNoteMode && (
           <Navbar
             user={user}
@@ -105,7 +109,7 @@ function App() {
             onLogout={handleLogout}
           />
         )}
-        <main className={`app-main ${createNoteMode ? 'full-page' : ''}`}>
+        <main className={`flex-1 ${createNoteMode ? 'p-0' : ''}`}>
           {renderContent()}
         </main>
       </div>
@@ -114,7 +118,7 @@ function App() {
 
   // If not authenticated, show landing page with auth modals
   return (
-    <div className="App">
+    <div className="w-full min-h-screen">
       <Landing onAuthSuccess={handleAuthSuccess} />
     </div>
   );

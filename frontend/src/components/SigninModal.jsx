@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { authService } from '../services/authService';
 import { validateSigninForm } from '../utils/validation';
-import '../styles/AuthModal.css';
 
 export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -72,18 +71,27 @@ export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Sign In</h2>
-          <button className="modal-close-btn" onClick={onClose}>
+        <div className="flex justify-between items-center pb-6 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-text-primary">Sign In</h2>
+          <button
+            className="text-text-secondary hover:text-accent text-xl transition-colors"
+            onClick={onClose}
+          >
             ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {serverError && <div className="form-error-message">{serverError}</div>}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {serverError && (
+            <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+              {serverError}
+            </div>
+          )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1">
+              Email Address *
+            </label>
             <input
               type="email"
               id="email"
@@ -91,13 +99,17 @@ export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.email}
               onChange={handleChange}
               placeholder="john@example.com"
-              className={errors.email ? 'input-error' : ''}
+              className={`input w-full ${errors.email ? 'border-red-500' : ''}`}
             />
-            {errors.email && <span className="field-error">{errors.email}</span>}
+            {errors.email && (
+              <span className="text-red-500 text-xs mt-1 inline-block">{errors.email}</span>
+            )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password *</label>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-text-primary mb-1">
+              Password *
+            </label>
             <input
               type="password"
               id="password"
@@ -105,29 +117,28 @@ export const SigninModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              className={errors.password ? 'input-error' : ''}
+              className={`input w-full ${errors.password ? 'border-red-500' : ''}`}
             />
             {errors.password && (
-              <span className="field-error">{errors.password}</span>
+              <span className="text-red-500 text-xs mt-1 inline-block">{errors.password}</span>
             )}
           </div>
 
           <button
             type="submit"
-            className="submit-btn"
             disabled={loading}
+            className="btn-primary w-full mt-6 disabled:opacity-50"
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="form-footer-text">
+        <p className="text-center text-sm text-text-secondary mt-4">
           Don't have an account?{' '}
           <button
-            className="link-btn"
+            className="text-accent font-semibold hover:underline"
             onClick={() => {
               onClose();
-              // This will be handled by parent component
             }}
           >
             Create Account
