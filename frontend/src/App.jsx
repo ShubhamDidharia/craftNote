@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { Home } from './components/Home';
 import { Workspace } from './components/Workspace';
 import { Profile } from './components/Profile';
+import { CreateNotePage } from './components/CreateNotePage';
 import { authService } from './services/authService';
 import './App.css';
 
@@ -12,6 +13,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('home');
+  const [createNoteMode, setCreateNoteMode] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState(null);
 
   useEffect(() => {
     // Check if user is already authenticated on app load
@@ -46,12 +49,39 @@ function App() {
     setCurrentTab('home');
   };
 
+  const handleCreateNote = (workspaceId, workspaceName) => {
+    setSelectedWorkspace({ _id: workspaceId, name: workspaceName });
+    setCreateNoteMode(true);
+  };
+
+  const handleNoteSaved = (newNote) => {
+    setCreateNoteMode(false);
+    setSelectedWorkspace(null);
+    setCurrentTab('workspace');
+  };
+
+  const handleCancelCreateNote = () => {
+    setCreateNoteMode(false);
+    setSelectedWorkspace(null);
+  };
+
   const renderContent = () => {
+    if (createNoteMode && selectedWorkspace) {
+      return (
+        <CreateNotePage
+          workspaceId={selectedWorkspace._id}
+          workspaceName={selectedWorkspace.name}
+          onNoteSaved={handleNoteSaved}
+          onCancel={handleCancelCreateNote}
+        />
+      );
+    }
+
     switch (currentTab) {
       case 'home':
         return <Home user={user} />;
       case 'workspace':
-        return <Workspace />;
+        return <Workspace onCreateNote={handleCreateNote} />;
       case 'profile':
         return <Profile user={user} />;
       default:
@@ -67,13 +97,15 @@ function App() {
   if (isAuthenticated && user) {
     return (
       <div className="App authenticated">
-        <Navbar
-          user={user}
-          currentTab={currentTab}
-          onTabChange={setCurrentTab}
-          onLogout={handleLogout}
-        />
-        <main className="app-main">
+        {!createNoteMode && (
+          <Navbar
+            user={user}
+            currentTab={currentTab}
+            onTabChange={setCurrentTab}
+            onLogout={handleLogout}
+          />
+        )}
+        <main className={`app-main ${createNoteMode ? 'full-page' : ''}`}>
           {renderContent()}
         </main>
       </div>

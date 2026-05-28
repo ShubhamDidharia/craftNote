@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { workspaceService } from '../services/workspaceService';
 import { noteService } from '../services/noteService';
-import { CreateNote } from './CreateNote';
 import { NoteList } from './NoteList';
 import '../styles/Workspace.css';
 
-export const Workspace = () => {
+export const Workspace = ({ onCreateNote }) => {
   const [workspaces, setWorkspaces] = useState([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [notes, setNotes] = useState([]);
@@ -13,7 +12,6 @@ export const Workspace = () => {
   const [notesLoading, setNotesLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showCreateNote, setShowCreateNote] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -128,7 +126,6 @@ export const Workspace = () => {
 
   const handleNoteCreated = (newNote) => {
     setNotes([newNote, ...notes]);
-    setShowCreateNote(false);
   };
 
   const handleNoteDeleted = (noteId) => {
@@ -277,19 +274,11 @@ export const Workspace = () => {
                 </div>
                 <button
                   className="create-note-btn"
-                  onClick={() => setShowCreateNote(true)}
+                  onClick={() => onCreateNote(selectedWorkspace._id, selectedWorkspace.name)}
                 >
                   + Create New Note
                 </button>
               </div>
-
-              {showCreateNote && (
-                <CreateNote
-                  workspaceId={selectedWorkspace._id}
-                  onNoteCreated={handleNoteCreated}
-                  onCancel={() => setShowCreateNote(false)}
-                />
-              )}
 
               {notesLoading ? (
                 <div className="loading-state">Loading notes...</div>
