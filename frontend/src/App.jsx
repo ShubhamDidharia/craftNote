@@ -17,16 +17,38 @@ function App() {
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
 
   useEffect(() => {
-    // Check if user is already authenticated on app load
     const checkAuth = async () => {
       try {
-        if (authService.isAuthenticated()) {
-          const user = authService.getUser();
-          setUser(user);
-          setIsAuthenticated(true);
+        if (!authService.isAuthenticated()) {
+          return;
+        }
+
+        const cachedUser = authService.getUser();
+        setUser(cachedUser);
+        setIsAuthenticated(true);
+
+        try {
+          const freshUser = await authService.getCurrentUser();
+          setUser(freshUser);
+        } catch (error) {
+          const isAuthError =
+            error.message?.includes('token') ||
+            error.message?.includes('401') ||
+            error.message?.includes('expired') ||
+            error.message?.includes('Invalid');
+          if (isAuthError) {
+            authService.logout();
+            setUser(null);
+            setIsAuthenticated(false);
+          } else {
+            console.warn('Auth refresh skipped (server unreachable):', error.message);
+          }
         }
       } catch (error) {
         console.error('Auth check error:', error);
+        authService.logout();
+        setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }
@@ -47,6 +69,8 @@ function App() {
     setUser(null);
     setIsAuthenticated(false);
     setCurrentTab('home');
+    setCreateNoteMode(false);
+    setSelectedWorkspace(null);
   };
 
   const handleCreateNote = (workspaceId, workspaceName) => {
