@@ -1,4 +1,5 @@
 const Workspace = require('../models/Workspace');
+const Note = require('../models/Note');
 
 // @route   POST /api/workspaces
 // @desc    Create a new workspace
@@ -136,7 +137,7 @@ exports.deleteWorkspace = async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to delete this workspace' });
     }
 
-    // Delete workspace (cascade delete notes would be handled by middleware in production)
+    await Note.deleteMany({ workspaceId: id, userId });
     await Workspace.findByIdAndDelete(id);
 
     res.status(200).json({

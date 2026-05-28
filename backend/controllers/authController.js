@@ -1,6 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Workspace = require('../models/Workspace');
+const Note = require('../models/Note');
 const { jwtSecret } = require('../config/env');
+
+const formatUser = (user) => ({
+  id: user._id,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email,
+});
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, jwtSecret, {
@@ -51,12 +60,7 @@ exports.signup = async (req, res) => {
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
+      user: formatUser(user),
     });
   } catch (error) {
     console.error('Signup error:', error);
@@ -94,12 +98,7 @@ exports.signin = async (req, res) => {
     res.status(200).json({
       message: 'User logged in successfully',
       token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
+      user: formatUser(user),
     });
   } catch (error) {
     console.error('Signin error:', error);
@@ -112,16 +111,82 @@ exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
-    res.status(200).json({
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
-    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ user: formatUser(user) });
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ error: 'Error fetching user' });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, email } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!firstName?.trim() || !lastName?.trim() || !email?.trim()) {
+      return res.status(400).json({ error: 'First name, last name, and email are required' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (normalizedEmail !== user.email) {
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return res.status(409).json({ error: 'Email is already in use' });
+      }
+      user.email = normalizedEmail;
+    }
+
+    user.firstName = firstName.trim();
+    user.lastName = lastName.trim();
+    await user.save();
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: formatUser(user),
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+    res.status(500).json({ error: 'Error updating profile' });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required to delete your account' });
+    }
+
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isPasswordMatch = await user.matchPassword(password);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    const userId = user._id;
+    await Note.deleteMany({ userId });
+    await Workspace.deleteMany({ userId });
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: 'Error deleting account' });
   }
 };

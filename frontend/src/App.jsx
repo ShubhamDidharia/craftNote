@@ -107,7 +107,14 @@ function App() {
       case 'workspace':
         return <Workspace onCreateNote={handleCreateNote} />;
       case 'profile':
-        return <Profile user={user} />;
+        return (
+          <Profile
+            user={user}
+            onUserUpdated={setUser}
+            onAccountDeleted={handleLogout}
+            onNavigateToWorkspace={() => setCurrentTab('workspace')}
+          />
+        );
       default:
         return <Home user={user} />;
     }

@@ -105,4 +105,54 @@ export const authService = {
     localStorage.setItem('user', JSON.stringify(data.user));
     return data.user;
   },
+
+  updateProfile: async (profileData) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    const data = await parseResponse(response);
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to update profile');
+    }
+
+    localStorage.setItem('user', JSON.stringify(data.user));
+    return data.user;
+  },
+
+  deleteAccount: async (password) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/account`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password }),
+    });
+
+    const data = await parseResponse(response);
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to delete account');
+    }
+
+    authService.logout();
+    return data;
+  },
 };

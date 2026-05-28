@@ -8,5 +8,7 @@ const router = express.Router();
 router.post('/signup', authController.signup);
 router.post('/signin', authController.signin);
 router.get('/me', authMiddleware, authController.getCurrentUser);
+router.put('/profile', authMiddleware, authController.updateProfile);
+router.delete('/account', authMiddleware, authController.deleteAccount);
 
 module.exports = router;
