@@ -116,10 +116,10 @@ export const NoteEditorPage = ({
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-gradient-to-br from-bg-main to-gray-200">
-      <div className="bg-bg-surface border-b border-gray-200 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-linear-to-br from-bg-main to-gray-200">
+      <div className="bg-bg-surface border-b border-gray-200 px-4 sm:px-6 py-4 shadow-sm">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={onCancel}
@@ -136,13 +136,13 @@ export const NoteEditorPage = ({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 w-full sm:w-auto">
             <span className="text-xs text-gray-400 px-2 py-1 bg-gray-100 rounded-md">
               {wordCount} words
             </span>
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent to-accent/80 text-white rounded-lg text-sm font-semibold hover:shadow-md disabled:opacity-60 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-linear-to-r from-accent to-accent/80 text-white rounded-lg text-sm font-semibold hover:shadow-md disabled:opacity-60 transition-all w-full sm:w-auto"
               onClick={handleSave}
               disabled={saving}
             >
@@ -160,17 +160,17 @@ export const NoteEditorPage = ({
       )}
 
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-5xl mx-auto px-6 py-10 flex flex-col gap-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col gap-8">
           <div>
             <input
               type="text"
-              className="w-full text-4xl font-bold text-text-primary border-none bg-transparent outline-none mb-4 leading-tight"
+              className="w-full text-3xl sm:text-4xl font-bold text-text-primary border-none bg-transparent outline-none mb-4 leading-tight"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note Title"
               autoFocus={!isEdit}
             />
-            <div className="inline-flex flex-col gap-3 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 shadow-sm">
+            <div className="inline-flex w-full sm:w-auto flex-col gap-3 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <Sparkles size={15} className="text-cyan-700" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-700">
@@ -179,7 +179,7 @@ export const NoteEditorPage = ({
               </div>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-accent to-cyan-600 shadow-md hover:shadow-lg hover:scale-[1.01] transition-all"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-accent to-cyan-600 shadow-md hover:shadow-lg hover:scale-[1.01] transition-all w-full"
                 onClick={() => setShowTitleModal(true)}
               >
                 <Sparkles size={16} />
@@ -188,14 +188,14 @@ export const NoteEditorPage = ({
             </div>
           </div>
 
-          <div className="relative min-h-[320px]">
+          <div className="relative min-h-80">
             <textarea
-              className="w-full min-h-[320px] text-base leading-relaxed text-gray-700 border-none bg-bg-surface outline-none resize-none p-6 rounded-xl font-sans shadow-sm"
+              className="w-full min-h-60 sm:min-h-80 text-base leading-relaxed text-gray-700 border-none bg-bg-surface outline-none resize-none p-4 sm:p-6 rounded-xl font-sans shadow-sm"
               value={content}
               onChange={handleContentChange}
               placeholder="Start writing your note here..."
             />
-            <div className="absolute bottom-4 right-4 flex flex-col gap-3 bg-bg-surface/95 backdrop-blur-sm p-3 rounded-2xl shadow-xl border border-cyan-100 min-w-[180px]">
+            <div className="static sm:absolute sm:bottom-4 sm:right-4 mt-4 sm:mt-0 flex flex-col gap-3 bg-bg-surface/95 backdrop-blur-sm p-3 rounded-2xl shadow-xl border border-cyan-100 w-full sm:min-w-45 sm:max-w-55">
               <div className="flex items-center justify-between gap-2 px-1">
                 <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-700">
                   AI assist
@@ -206,7 +206,7 @@ export const NoteEditorPage = ({
               </div>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-950 border border-amber-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-amber-300 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-linear-to-r from-amber-50 to-yellow-50 text-amber-950 border border-amber-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-amber-300 transition-all w-full"
                 onClick={() => setShowWritingHelp(true)}
               >
                 <Lightbulb size={14} />
@@ -214,7 +214,7 @@ export const NoteEditorPage = ({
               </button>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-950 border border-emerald-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-emerald-300 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-linear-to-r from-emerald-50 to-emerald-100 text-emerald-950 border border-emerald-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-emerald-300 transition-all w-full"
                 onClick={() => setShowVerifyPanel(true)}
               >
                 <ShieldCheck size={14} />
@@ -226,7 +226,7 @@ export const NoteEditorPage = ({
           <div className="bg-bg-surface p-4 rounded-xl shadow-sm">
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-text-secondary border border-gray-200 rounded-md text-xs font-medium hover:bg-gray-200 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-text-secondary border border-gray-200 rounded-md text-xs font-medium hover:bg-gray-200 transition-all w-full sm:w-auto"
               onClick={() => setShowTagInput(!showTagInput)}
             >
               <Tag size={14} />

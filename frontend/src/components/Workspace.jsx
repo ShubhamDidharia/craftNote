@@ -152,9 +152,9 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto p-5 min-h-[calc(100vh-64px)]">
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-5 h-full">
-        <aside className="bg-bg-surface rounded-xl shadow-sm p-4 overflow-y-auto flex flex-col max-h-[calc(100vh-100px)]">
+    <div className="max-w-[1400px] mx-auto p-4 sm:p-5 min-h-[calc(100vh-64px)]">
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 sm:gap-5 h-full">
+        <aside className="bg-bg-surface rounded-xl shadow-sm p-4 overflow-y-auto flex flex-col max-h-none lg:max-h-[calc(100vh-100px)]">
           <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-200">
             <h3 className="m-0 text-base font-semibold text-text-primary flex items-center gap-2">
               <LayoutGrid size={18} />
@@ -193,7 +193,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
                       Aa
                     </span>
                     <span className="text-sm font-semibold flex-1 truncate">{workspace.name}</span>
-                    <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button
                         type="button"
                         className="p-1 text-gray-600 hover:bg-gray-200 rounded"
@@ -221,7 +221,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
           </div>
         </aside>
 
-        <main className="bg-bg-surface rounded-xl shadow-sm p-6 overflow-y-auto flex flex-col gap-5 min-h-[calc(100vh-100px)]">
+        <main className="bg-bg-surface rounded-xl shadow-sm p-4 sm:p-6 overflow-y-auto flex flex-col gap-5 min-h-0 lg:min-h-[calc(100vh-100px)]">
           {error && (
             <div className="bg-red-100 text-red-600 p-3 rounded-lg border border-red-300 text-sm">
               {error}
@@ -230,7 +230,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
 
           {selectedWorkspace ? (
             <>
-              <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b-2 border-gray-200">
+              <div className="flex flex-col lg:flex-row lg:justify-between items-start gap-4 pb-4 border-b-2 border-gray-200">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span
@@ -251,10 +251,10 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
                     </p>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full lg:w-auto">
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all w-full sm:w-auto"
                     onClick={() => setEditingWorkspace(selectedWorkspace)}
                   >
                     <Pencil size={16} />
@@ -262,7 +262,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all w-full sm:w-auto"
                     onClick={() =>
                       onCreateNote(
                         selectedWorkspace._id,

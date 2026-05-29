@@ -80,12 +80,14 @@ export const Home = ({ user, onEditNote }) => {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-5 py-10">
-      <div className="mb-10 text-center">
-        <h2 className="m-0 mb-2 text-3xl font-bold text-text-primary">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-5 py-6 sm:py-10">
+      <div className="mb-8 sm:mb-10 text-center">
+        <h2 className="m-0 mb-2 text-2xl sm:text-3xl font-bold text-text-primary break-words">
           Welcome back, {user.firstName}!
         </h2>
-        <p className="m-0 text-base text-text-secondary">Your latest notes from all workspaces</p>
+        <p className="m-0 text-sm sm:text-base text-text-secondary px-2">
+          Your latest notes from all workspaces
+        </p>
       </div>
 
       {error && (
@@ -95,7 +97,7 @@ export const Home = ({ user, onEditNote }) => {
       )}
 
       {loading ? (
-        <div className="text-center py-16 text-base text-text-secondary">Loading your notes...</div>
+        <div className="text-center py-12 sm:py-16 text-base text-text-secondary">Loading your notes...</div>
       ) : allNotes.length > 0 ? (
         <div className="flex flex-col gap-5">
           <h3 className="m-0 text-lg font-semibold text-text-primary py-3 border-b-2 border-gray-200 flex items-center gap-2">

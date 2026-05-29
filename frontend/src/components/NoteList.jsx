@@ -43,7 +43,7 @@ export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated, wor
   const unpinnedNotes = notes.filter((note) => !note.isPinned);
 
   const renderGrid = (list) => (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
       {list.map((note) => {
         const noteWorkspace = workspace || workspaceMap?.[note.workspaceId?._id || note.workspaceId];
         return (
@@ -103,7 +103,7 @@ const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
-      className="rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all border flex flex-col gap-3 cursor-pointer text-left"
+      className="rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all border flex flex-col gap-3 cursor-pointer text-left"
       style={{
         ...themeStyle,
         borderColor: theme.border,
@@ -115,7 +115,7 @@ const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
         </h4>
         <button
           type="button"
-          className="p-1.5 rounded-md flex-shrink-0 transition-all"
+          className="p-1.5 rounded-md shrink-0 transition-all"
           style={{ backgroundColor: theme.tagBg }}
           onClick={onTogglePin}
           title={note.isPinned ? 'Unpin note' : 'Pin note'}
@@ -129,7 +129,7 @@ const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
       </div>
 
       {note.content && (
-        <div className="text-sm leading-relaxed max-h-[60px] overflow-hidden" style={{ color: theme.muted }}>
+        <div className="text-sm leading-relaxed max-h-15 overflow-hidden" style={{ color: theme.muted }}>
           {contentPreview}
           {hasMore && '...'}
         </div>
@@ -158,7 +158,7 @@ const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
       )}
 
       <div
-        className="flex justify-between items-center pt-2 border-t"
+        className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-2 border-t"
         style={{ borderColor: theme.border }}
       >
         <span className="text-xs" style={{ color: theme.muted }}>
@@ -166,7 +166,7 @@ const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
         </span>
         <button
           type="button"
-          className="p-1.5 rounded-md hover:bg-red-100 text-red-600 transition-all"
+          className="p-1.5 rounded-md hover:bg-red-100 text-red-600 transition-all self-end sm:self-auto"
           onClick={onDelete}
           title="Delete note"
         >

@@ -8,6 +8,7 @@
 
   body {
     @apply bg-bg-main text-text-primary;
+    overflow-x: hidden;
   }
 
   code {
@@ -57,6 +58,6 @@
   }
 
   .modal-content {
-    @apply bg-bg-surface rounded-xl shadow-2xl max-w-md w-full mx-4;
+    @apply bg-bg-surface rounded-xl shadow-2xl max-w-md w-[calc(100vw-1.5rem)] sm:w-full mx-3 sm:mx-4;
   }
 }

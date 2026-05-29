@@ -21,18 +21,18 @@ export const Navbar = ({ user, onLogout }) => {
 
   return (
     <nav className="bg-gradient-to-r from-accent to-accent/90 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto px-5 py-3 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-2 min-w-fit">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-5 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="flex items-center justify-between gap-2 w-full sm:w-auto min-w-fit">
           <FileText size={24} strokeWidth={2} />
           <h1 className="m-0 text-xl font-bold tracking-wide">CraftNote</h1>
         </div>
 
-        <div className="flex gap-1 flex-1 justify-center">
+        <div className="flex flex-wrap gap-2 sm:gap-1 w-full sm:flex-1 sm:justify-center">
           {tabs.map(({ path, label, icon: Icon }) => (
             <button
               key={path}
               type="button"
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+              className={`inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-md text-sm font-semibold transition-all flex-1 sm:flex-none min-w-[104px] ${
                 location.pathname === path
                   ? 'bg-white text-accent shadow-sm'
                   : 'bg-white/20 hover:bg-white/30'
@@ -45,7 +45,7 @@ export const Navbar = ({ user, onLogout }) => {
           ))}
         </div>
 
-        <div className="flex items-center gap-4 min-w-fit">
+        <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto min-w-fit">
           <div className="hidden sm:flex flex-col text-right">
             <span className="text-sm font-semibold">
               {user.firstName} {user.lastName}
@@ -54,7 +54,7 @@ export const Navbar = ({ user, onLogout }) => {
           </div>
           <button
             type="button"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 border-2 border-white rounded-md text-sm font-semibold hover:bg-white hover:text-accent transition-all"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/20 border-2 border-white rounded-md text-sm font-semibold hover:bg-white hover:text-accent transition-all w-full sm:w-auto"
             onClick={handleLogout}
           >
             <LogOut size={16} />

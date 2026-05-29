@@ -35,8 +35,8 @@ export const WorkspaceFormModal = ({
   };
 
   return (
-    <div className="modal-overlay z-[210]" onClick={onClose}>
-      <div className="modal-content p-6 max-w-lg" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay z-210" onClick={onClose}>
+      <div className="modal-content w-[calc(100vw-1.5rem)] sm:w-full p-4 sm:p-6 max-w-lg mx-3 sm:mx-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="m-0 text-lg font-bold text-text-primary">
             {mode === 'edit' ? 'Edit Workspace' : 'New Workspace'}
@@ -62,7 +62,7 @@ export const WorkspaceFormModal = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
-              className="input w-full resize-none min-h-[80px]"
+              className="input w-full resize-none min-h-20"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Optional description"
@@ -74,11 +74,11 @@ export const WorkspaceFormModal = ({
             onChange={(colorTheme) => setFormData({ ...formData, colorTheme })}
             disabled={loading}
           />
-          <div className="flex gap-3 justify-end pt-2">
-            <button type="button" className="btn-ghost" onClick={onClose} disabled={loading}>
+          <div className="flex flex-col sm:flex-row gap-3 justify-end pt-2">
+            <button type="button" className="btn-ghost w-full sm:w-auto" onClick={onClose} disabled={loading}>
               Cancel
             </button>
-            <button type="submit" className="btn-primary" disabled={loading}>
+            <button type="submit" className="btn-primary w-full sm:w-auto" disabled={loading}>
               {loading ? 'Saving...' : mode === 'edit' ? 'Save Changes' : 'Create'}
             </button>
           </div>

@@ -39,16 +39,16 @@ export const NoteDetailModal = ({
   return (
     <div className="modal-overlay z-[200]" onClick={onClose}>
       <div
-        className="rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col mx-4 overflow-hidden border"
+        className="rounded-2xl shadow-2xl w-[calc(100vw-1.5rem)] sm:w-full max-w-3xl max-h-[92vh] flex flex-col mx-3 sm:mx-4 overflow-hidden border"
         onClick={(e) => e.stopPropagation()}
         style={{ ...themeStyle, borderColor: theme.border }}
       >
         <div
-          className="flex items-start justify-between gap-4 p-6 border-b"
+          className="flex items-start justify-between gap-4 p-4 sm:p-6 border-b"
           style={{ borderColor: theme.border }}
         >
           <div className="flex-1 min-w-0">
-            <h2 className="m-0 text-2xl font-bold break-words" style={{ color: theme.text }}>
+            <h2 className="m-0 text-xl sm:text-2xl font-bold break-words" style={{ color: theme.text }}>
               {note.title}
             </h2>
             {workspaceName && (
@@ -68,7 +68,7 @@ export const NoteDetailModal = ({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {note.content ? (
             <div
               className="text-base leading-relaxed whitespace-pre-wrap"
@@ -102,17 +102,17 @@ export const NoteDetailModal = ({
         </div>
 
         <div
-          className="flex flex-wrap items-center justify-between gap-4 p-6 border-t"
+          className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-4 p-4 sm:p-6 border-t"
           style={{ borderColor: theme.border, backgroundColor: theme.tagBg }}
         >
           <div className="flex items-center gap-2 text-xs" style={{ color: theme.muted }}>
             <Calendar size={14} />
             <span>{new Date(note.updatedAt || note.createdAt).toLocaleString()}</span>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full sm:w-auto">
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all w-full sm:w-auto"
               style={{ borderColor: theme.border, color: theme.text }}
               onClick={() => onTogglePin?.(note)}
             >
@@ -121,7 +121,7 @@ export const NoteDetailModal = ({
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all w-full sm:w-auto"
               onClick={() => onEdit?.(note)}
             >
               <Pencil size={16} />
@@ -129,7 +129,7 @@ export const NoteDetailModal = ({
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-all w-full sm:w-auto"
               onClick={() => onDelete?.(note._id)}
             >
               <Trash2 size={16} />

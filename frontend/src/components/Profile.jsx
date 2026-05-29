@@ -140,43 +140,43 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
   };
 
   return (
-    <div className="max-w-[800px] mx-auto px-5 py-10">
-      <div className="mb-8">
-        <h2 className="m-0 text-2xl text-text-primary">User Profile</h2>
+    <div className="max-w-[800px] mx-auto px-4 sm:px-5 py-6 sm:py-10">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="m-0 text-2xl text-text-primary break-words">User Profile</h2>
       </div>
 
       <div className="bg-bg-surface rounded-xl shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-accent to-accent/80 p-10 flex items-center gap-6 text-white">
-          <div className="w-[100px] h-[100px] rounded-full bg-white/30 flex items-center justify-center text-[40px] font-bold flex-shrink-0">
+        <div className="bg-gradient-to-r from-accent to-accent/80 p-6 sm:p-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-white text-center sm:text-left">
+          <div className="w-20 h-20 sm:w-[100px] sm:h-[100px] rounded-full bg-white/30 flex items-center justify-center text-3xl sm:text-[40px] font-bold flex-shrink-0">
             {user.firstName?.charAt(0)}
             {user.lastName?.charAt(0)}
           </div>
           <div className="flex-1">
-            <h3 className="m-0 mb-2 text-xl font-bold">
+            <h3 className="m-0 mb-2 text-xl font-bold break-words">
               {user.firstName} {user.lastName}
             </h3>
-            <p className="m-0 text-sm opacity-90">{user.email}</p>
+            <p className="m-0 text-sm opacity-90 break-words">{user.email}</p>
           </div>
         </div>
 
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
           <h4 className="m-0 mb-4 text-base font-semibold text-text-primary">Account Information</h4>
-          <div className="flex py-3 border-b border-gray-100">
-            <span className="w-[150px] font-medium text-text-secondary text-sm">First Name:</span>
+          <div className="flex flex-col sm:flex-row py-3 border-b border-gray-100 gap-1 sm:gap-0">
+            <span className="w-full sm:w-[150px] font-medium text-text-secondary text-sm">First Name:</span>
             <span className="flex-1 text-text-primary text-sm break-words">{user.firstName}</span>
           </div>
-          <div className="flex py-3 border-b border-gray-100">
-            <span className="w-[150px] font-medium text-text-secondary text-sm">Last Name:</span>
+          <div className="flex flex-col sm:flex-row py-3 border-b border-gray-100 gap-1 sm:gap-0">
+            <span className="w-full sm:w-[150px] font-medium text-text-secondary text-sm">Last Name:</span>
             <span className="flex-1 text-text-primary text-sm break-words">{user.lastName}</span>
           </div>
-          <div className="flex py-3">
-            <span className="w-[150px] font-medium text-text-secondary text-sm">Email:</span>
+          <div className="flex flex-col sm:flex-row py-3 gap-1 sm:gap-0">
+            <span className="w-full sm:w-[150px] font-medium text-text-secondary text-sm">Email:</span>
             <span className="flex-1 text-text-primary text-sm break-words">{user.email}</span>
           </div>
         </div>
 
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center mb-4">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
             <h4 className="m-0 text-base font-semibold text-text-primary flex items-center gap-2">
               <LayoutGrid size={18} />
               My Workspaces
@@ -211,11 +211,11 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                 return (
                   <li
                     key={workspace._id}
-                    className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg bg-bg-main"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg bg-bg-main"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span
-                        className="w-9 h-9 rounded-md flex-shrink-0 flex items-center justify-center text-[10px] font-bold"
+                        className="w-9 h-9 rounded-md shrink-0 flex items-center justify-center text-[10px] font-bold"
                         style={getThemeSwatchStyle(themeId)}
                       >
                         Aa
@@ -225,10 +225,10 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                         <p className="m-0 text-xs text-gray-500 mt-0.5">{theme.name} theme</p>
                       </div>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto flex-shrink-0">
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50"
+                        className="inline-flex items-center justify-center gap-1 text-xs px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 w-full sm:w-auto"
                         onClick={() => setEditingWorkspace(workspace)}
                       >
                         <Pencil size={12} />
@@ -236,7 +236,7 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                       </button>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 text-red-600 border border-red-200 rounded-md hover:bg-red-50"
+                        className="inline-flex items-center justify-center gap-1 text-xs px-3 py-2 text-red-600 border border-red-200 rounded-md hover:bg-red-50 w-full sm:w-auto"
                         onClick={() => handleDeleteWorkspace(workspace._id, workspace.name)}
                       >
                         <Trash2 size={12} />
@@ -250,12 +250,12 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
           )}
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <h4 className="m-0 mb-4 text-base font-semibold text-text-primary">Actions</h4>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-gray-200 bg-bg-surface rounded-lg text-sm font-semibold hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-gray-200 bg-bg-surface rounded-lg text-sm font-semibold hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all w-full sm:w-auto"
               onClick={openEditModal}
             >
               <Pencil size={16} />
@@ -263,7 +263,7 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-red-200 bg-red-50 rounded-lg text-sm font-semibold hover:bg-red-100 hover:border-red-300 text-red-700 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-red-200 bg-red-50 rounded-lg text-sm font-semibold hover:bg-red-100 hover:border-red-300 text-red-700 transition-all w-full sm:w-auto"
               onClick={() => {
                 setDeletePassword('');
                 setDeleteError('');
@@ -279,7 +279,7 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
 
       {showEditModal && (
         <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="modal-content p-6 max-w-md" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content w-[calc(100vw-1.5rem)] sm:w-full p-4 sm:p-6 max-w-md mx-3 sm:mx-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="m-0 mb-4 text-lg font-bold text-text-primary">Edit Details</h3>
 
             {editError && (
@@ -322,16 +322,16 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                   disabled={editLoading}
                 />
               </div>
-              <div className="flex gap-3 justify-end pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 justify-end pt-2">
                 <button
                   type="button"
-                  className="btn-ghost"
+                  className="btn-ghost w-full sm:w-auto"
                   onClick={() => setShowEditModal(false)}
                   disabled={editLoading}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary" disabled={editLoading}>
+                <button type="submit" className="btn-primary w-full sm:w-auto" disabled={editLoading}>
                   {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
@@ -359,7 +359,7 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
 
       {showDeleteModal && (
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
-          <div className="modal-content p-6 max-w-md" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content w-[calc(100vw-1.5rem)] sm:w-full p-4 sm:p-6 max-w-md mx-3 sm:mx-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="m-0 mb-2 text-lg font-bold text-red-700">Delete Account</h3>
             <p className="m-0 mb-4 text-sm text-text-secondary">
               This permanently deletes your account, all workspaces, and all notes. This cannot be
@@ -387,10 +387,10 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                   disabled={deleteLoading}
                 />
               </div>
-              <div className="flex gap-3 justify-end pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 justify-end pt-2">
                 <button
                   type="button"
-                  className="btn-ghost"
+                  className="btn-ghost w-full sm:w-auto"
                   onClick={() => setShowDeleteModal(false)}
                   disabled={deleteLoading}
                 >
@@ -398,7 +398,7 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 w-full sm:w-auto"
                   disabled={deleteLoading}
                 >
                   {deleteLoading ? 'Deleting...' : 'Delete My Account'}
