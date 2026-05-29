@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { Landing } from './components/Landing';
 import { Navbar } from './components/Navbar';
@@ -10,11 +11,41 @@ import { authService } from './services/authService';
 import { showToast } from './utils/toast';
 import './App.css';
 
-function App() {
+// Layout component for authenticated routes
+function AuthLayout({ user, onLogout, children }) {
+  return (
+    <div className="w-full min-h-screen bg-bg-main flex flex-col">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: '#fff',
+            color: '#212529',
+            borderRadius: '10px',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+          },
+          success: { iconTheme: { primary: '#9E1B32', secondary: '#fff' } },
+        }}
+      />
+      <Navbar user={user} onLogout={onLogout} />
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}
+
+// Protected route wrapper
+function ProtectedRoute({ isAuthenticated, children }) {
+  return isAuthenticated ? children : <Navigate to="/" />;
+}
+
+// Main routes component with access to useNavigate
+function AppRoutes() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState('home');
   const [noteEditor, setNoteEditor] = useState(null);
 
   useEffect(() => {
@@ -59,80 +90,29 @@ function App() {
   const handleAuthSuccess = (userData, authType) => {
     setUser(userData);
     setIsAuthenticated(true);
-    setCurrentTab('home');
     showToast.success(authType === 'signup' ? 'Account created successfully!' : 'Signed in successfully!');
   };
+
+  // Navigate when authentication is complete
+  useEffect(() => {
+    if (isAuthenticated && user && location.pathname === '/') {
+      navigate('/home');
+    }
+  }, [isAuthenticated, user, navigate, location.pathname]);
 
   const handleLogout = () => {
     authService.logout();
     setUser(null);
     setIsAuthenticated(false);
-    setCurrentTab('home');
     setNoteEditor(null);
-  };
-
-  const handleCreateNote = (workspaceId, workspaceName, colorTheme) => {
-    setNoteEditor({ mode: 'create', workspaceId, workspaceName, colorTheme });
-  };
-
-  const handleEditNote = (note, workspaceName) => {
-    setNoteEditor({
-      mode: 'edit',
-      workspaceId: note.workspaceId,
-      workspaceName: workspaceName || 'Workspace',
-      note,
-    });
   };
 
   const handleNoteSaved = () => {
-    const wasCreate = noteEditor?.mode === 'create';
     setNoteEditor(null);
-    if (wasCreate) {
-      setCurrentTab('workspace');
-    }
   };
 
   const handleCancelNoteEditor = () => {
     setNoteEditor(null);
-  };
-
-  const renderMainContent = () => {
-    if (noteEditor) {
-      return (
-        <NoteEditorPage
-          mode={noteEditor.mode}
-          workspaceId={noteEditor.workspaceId}
-          workspaceName={noteEditor.workspaceName}
-          colorTheme={noteEditor.colorTheme}
-          note={noteEditor.note}
-          onSaved={handleNoteSaved}
-          onCancel={handleCancelNoteEditor}
-        />
-      );
-    }
-
-    switch (currentTab) {
-      case 'home':
-        return <Home user={user} onEditNote={handleEditNote} />;
-      case 'workspace':
-        return (
-          <Workspace onCreateNote={handleCreateNote} onEditNote={handleEditNote} />
-        );
-      case 'profile':
-        return (
-          <Profile
-            user={user}
-            onUserUpdated={(updated) => {
-              setUser(updated);
-              showToast.success('Profile updated successfully');
-            }}
-            onAccountDeleted={handleLogout}
-            onNavigateToWorkspace={() => setCurrentTab('workspace')}
-          />
-        );
-      default:
-        return <Home user={user} onEditNote={handleEditNote} />;
-    }
   };
 
   if (loading) {
@@ -143,42 +123,123 @@ function App() {
     );
   }
 
-  if (isAuthenticated && user) {
-    return (
-      <div className="w-full min-h-screen bg-bg-main flex flex-col">
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3500,
-            style: {
-              background: '#fff',
-              color: '#212529',
-              borderRadius: '10px',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
-            },
-            success: { iconTheme: { primary: '#9E1B32', secondary: '#fff' } },
-          }}
-        />
-        <Navbar
-          user={user}
-          currentTab={currentTab}
-          onTabChange={(tab) => {
-            setNoteEditor(null);
-            setCurrentTab(tab);
-          }}
-          onLogout={handleLogout}
-        />
-        <main className="flex-1">{renderMainContent()}</main>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full min-h-screen">
+    <>
       <Toaster position="top-right" />
-      <Landing onAuthSuccess={handleAuthSuccess} />
-    </div>
+      <Routes>
+        {/* Landing/Auth route */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Navigate to="/home" /> : <Landing onAuthSuccess={handleAuthSuccess} />
+          }
+        />
+
+        {/* Home route */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AuthLayout user={user} onLogout={handleLogout}>
+                {noteEditor ? (
+                  <NoteEditorPage
+                    mode={noteEditor.mode}
+                    workspaceId={noteEditor.workspaceId}
+                    workspaceName={noteEditor.workspaceName}
+                    colorTheme={noteEditor.colorTheme}
+                    note={noteEditor.note}
+                    onSaved={handleNoteSaved}
+                    onCancel={handleCancelNoteEditor}
+                  />
+                ) : (
+                  <Home
+                    user={user}
+                    onEditNote={(note, workspaceName) => {
+                      setNoteEditor({
+                        mode: 'edit',
+                        workspaceId: note.workspaceId,
+                        workspaceName: workspaceName || 'Workspace',
+                        note,
+                      });
+                    }}
+                  />
+                )}
+              </AuthLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Workspace route */}
+        <Route
+          path="/workspace"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AuthLayout user={user} onLogout={handleLogout}>
+                {noteEditor ? (
+                  <NoteEditorPage
+                    mode={noteEditor.mode}
+                    workspaceId={noteEditor.workspaceId}
+                    workspaceName={noteEditor.workspaceName}
+                    colorTheme={noteEditor.colorTheme}
+                    note={noteEditor.note}
+                    onSaved={handleNoteSaved}
+                    onCancel={handleCancelNoteEditor}
+                  />
+                ) : (
+                  <Workspace
+                    onCreateNote={(workspaceId, workspaceName, colorTheme) => {
+                      setNoteEditor({
+                        mode: 'create',
+                        workspaceId,
+                        workspaceName,
+                        colorTheme,
+                      });
+                    }}
+                    onEditNote={(note, workspaceName) => {
+                      setNoteEditor({
+                        mode: 'edit',
+                        workspaceId: note.workspaceId,
+                        workspaceName: workspaceName || 'Workspace',
+                        note,
+                      });
+                    }}
+                  />
+                )}
+              </AuthLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Profile route */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AuthLayout user={user} onLogout={handleLogout}>
+                <Profile
+                  user={user}
+                  onUserUpdated={(updated) => {
+                    setUser(updated);
+                    showToast.success('Profile updated successfully');
+                  }}
+                  onAccountDeleted={handleLogout}
+                />
+              </AuthLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch-all redirect */}
+        <Route path="*" element={<Navigate to={isAuthenticated ? '/home' : '/'} />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}

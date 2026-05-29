@@ -1,17 +1,22 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FileText, Home, LayoutGrid, User, LogOut } from 'lucide-react';
 import { showToast } from '../utils/toast';
 
-export const Navbar = ({ user, currentTab, onTabChange, onLogout }) => {
+export const Navbar = ({ user, onLogout }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleLogout = () => {
     onLogout();
     showToast.success('Logged out successfully');
+    navigate('/');
   };
 
   const tabs = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'workspace', label: 'Workspace', icon: LayoutGrid },
-    { id: 'profile', label: 'Profile', icon: User },
+    { path: '/home', label: 'Home', icon: Home },
+    { path: '/workspace', label: 'Workspace', icon: LayoutGrid },
+    { path: '/profile', label: 'Profile', icon: User },
   ];
 
   return (
@@ -23,16 +28,16 @@ export const Navbar = ({ user, currentTab, onTabChange, onLogout }) => {
         </div>
 
         <div className="flex gap-1 flex-1 justify-center">
-          {tabs.map(({ id, label, icon: Icon }) => (
+          {tabs.map(({ path, label, icon: Icon }) => (
             <button
-              key={id}
+              key={path}
               type="button"
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all ${
-                currentTab === id
+                location.pathname === path
                   ? 'bg-white text-accent shadow-sm'
                   : 'bg-white/20 hover:bg-white/30'
               }`}
-              onClick={() => onTabChange(id)}
+              onClick={() => navigate(path)}
             >
               <Icon size={16} />
               {label}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Pencil, Trash2, LayoutGrid, ChevronRight } from 'lucide-react';
 import { authService } from '../services/authService';
 import { workspaceService } from '../services/workspaceService';
@@ -10,7 +11,8 @@ import {
   resolveWorkspaceThemeId,
 } from '../constants/colorThemes';
 
-export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWorkspace }) => {
+export const Profile = ({ user, onUserUpdated, onAccountDeleted }) => {
+  const navigate = useNavigate();
   const [workspaces, setWorkspaces] = useState([]);
   const [loadingWorkspaces, setLoadingWorkspaces] = useState(true);
   const [workspaceError, setWorkspaceError] = useState('');
@@ -179,16 +181,14 @@ export const Profile = ({ user, onUserUpdated, onAccountDeleted, onNavigateToWor
               <LayoutGrid size={18} />
               My Workspaces
             </h4>
-            {onNavigateToWorkspace && (
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 text-sm text-accent font-semibold hover:underline"
-                onClick={onNavigateToWorkspace}
-              >
-                Manage in Workspace
-                <ChevronRight size={16} />
-              </button>
-            )}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-sm text-accent font-semibold hover:underline"
+              onClick={() => navigate('/workspace')}
+            >
+              Manage in Workspace
+              <ChevronRight size={16} />
+            </button>
           </div>
 
           {workspaceError && (
