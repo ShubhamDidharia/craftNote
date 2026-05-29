@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { aiService } from '../../services/aiService';
 
 const STYLES = [
@@ -56,7 +57,11 @@ export const WritingHelpModal = ({ isOpen, onClose, content, onAccept }) => {
         className="modal-content p-6 max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">AI Writing Help</h3>
+        <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-800 mb-3">
+          <Sparkles size={13} />
+          AI Writing Assistant
+        </div>
+        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">Refine your note without losing your voice</h3>
         <p className="m-0 mb-4 text-sm text-text-secondary">
           Reframe your note in your preferred style. Your ideas stay yours — only clarity and tone are improved.
         </p>
@@ -100,7 +105,12 @@ export const WritingHelpModal = ({ isOpen, onClose, content, onAccept }) => {
             <button type="button" className="btn-ghost" onClick={handleClose} disabled={loading}>
               Cancel
             </button>
-            <button type="button" className="btn-primary" onClick={handleGenerate} disabled={loading}>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60"
+              onClick={handleGenerate}
+              disabled={loading}
+            >
               {loading ? 'Reframing...' : 'Get Suggestions'}
             </button>
           </div>

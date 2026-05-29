@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { aiService } from '../../services/aiService';
 
 export const GenerateTitleModal = ({ isOpen, onClose, onTitleGenerated, noteContent }) => {
@@ -50,7 +51,11 @@ export const GenerateTitleModal = ({ isOpen, onClose, onTitleGenerated, noteCont
         className="modal-content p-6 max-w-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">Generate Title with AI</h3>
+        <div className="inline-flex items-center gap-2 rounded-full bg-cyan-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-800 mb-3">
+          <Sparkles size={13} />
+          AI Title Generator
+        </div>
+        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">Create a stronger note title</h3>
         <p className="m-0 mb-4 text-sm text-text-secondary">
           Describe what your note is about. If you have already written content, it will be used as additional context.
         </p>
@@ -85,7 +90,7 @@ export const GenerateTitleModal = ({ isOpen, onClose, onTitleGenerated, noteCont
             </button>
             <button
               type="button"
-              className="btn-primary"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-accent to-cyan-600 px-4 py-2 font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60"
               onClick={handleGenerate}
               disabled={loading}
             >

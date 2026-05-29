@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { aiService } from '../../services/aiService';
 
 export const VerifyContentPanel = ({ isOpen, onClose, content, onApplyFix }) => {
@@ -41,7 +42,11 @@ export const VerifyContentPanel = ({ isOpen, onClose, content, onApplyFix }) => 
         className="modal-content p-6 max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">AI Content Verification</h3>
+        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-800 mb-3">
+          <Sparkles size={13} />
+          AI Content Check
+        </div>
+        <h3 className="m-0 mb-2 text-lg font-bold text-text-primary">Check your note for possible issues</h3>
         <p className="m-0 mb-4 text-sm text-text-secondary">
           Check your note for incorrect concepts, outdated information, or factual issues.
         </p>
@@ -57,7 +62,12 @@ export const VerifyContentPanel = ({ isOpen, onClose, content, onApplyFix }) => 
             <button type="button" className="btn-ghost" onClick={handleClose} disabled={loading}>
               Cancel
             </button>
-            <button type="button" className="btn-primary" onClick={runVerification} disabled={loading}>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60"
+              onClick={runVerification}
+              disabled={loading}
+            >
               {loading ? 'Verifying...' : 'Run Verification'}
             </button>
           </div>

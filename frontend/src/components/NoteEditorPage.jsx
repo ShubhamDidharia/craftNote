@@ -170,14 +170,20 @@ export const NoteEditorPage = ({
               placeholder="Note Title"
               autoFocus={!isEdit}
             />
-            <div className="flex flex-wrap gap-2">
+            <div className="inline-flex flex-col gap-3 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 shadow-sm">
+              <div className="flex items-center gap-2">
+                <Sparkles size={15} className="text-cyan-700" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-700">
+                  AI tools
+                </span>
+              </div>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-accent border border-indigo-200 rounded-md text-xs font-medium hover:bg-indigo-100 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-accent to-cyan-600 shadow-md hover:shadow-lg hover:scale-[1.01] transition-all"
                 onClick={() => setShowTitleModal(true)}
               >
-                <Sparkles size={14} />
-                Generate Title
+                <Sparkles size={16} />
+                AI Generate Title
               </button>
             </div>
           </div>
@@ -189,22 +195,30 @@ export const NoteEditorPage = ({
               onChange={handleContentChange}
               placeholder="Start writing your note here..."
             />
-            <div className="absolute bottom-4 right-4 flex flex-col gap-2 bg-bg-surface p-2 rounded-lg shadow-md border border-gray-100">
+            <div className="absolute bottom-4 right-4 flex flex-col gap-3 bg-bg-surface/95 backdrop-blur-sm p-3 rounded-2xl shadow-xl border border-cyan-100 min-w-[180px]">
+              <div className="flex items-center justify-between gap-2 px-1">
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-700">
+                  AI assist
+                </span>
+                <span className="inline-flex items-center rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-bold text-cyan-700">
+                  Live
+                </span>
+              </div>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-2 bg-amber-50 text-amber-900 border border-amber-300 rounded-md text-xs font-medium hover:bg-amber-100 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-950 border border-amber-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-amber-300 transition-all"
                 onClick={() => setShowWritingHelp(true)}
               >
                 <Lightbulb size={14} />
-                Writing Help
+                AI Writing Help
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-900 border border-emerald-300 rounded-md text-xs font-medium hover:bg-emerald-100 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-950 border border-emerald-200 rounded-lg text-xs font-semibold hover:shadow-md hover:border-emerald-300 transition-all"
                 onClick={() => setShowVerifyPanel(true)}
               >
                 <ShieldCheck size={14} />
-                Verify Content
+                AI Verify Content
               </button>
             </div>
           </div>
