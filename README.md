@@ -56,12 +56,4 @@ npm run start  # or `node index.js` depending on package.json
 - Build the frontend with `npm run build` in `frontend` and serve the `dist` folder from a static host or integrate it into your backend static serving.
 - Backend can be deployed to any Node host; ensure environment variables (DB, secrets) are set and the chosen port is exposed.
 
-**Developer tips**
-- Keep `frontend/index.jsx` as the single entry point — remove `frontend/src/index.js` to avoid accidental use.
-- If you don't plan to collect performance metrics or run unit tests, delete `frontend/src/reportWebVitals.js`, `frontend/src/setupTests.js`, and `frontend/src/App.test.js` to reduce clutter.
 
-**Where to look next**
-- Frontend entry: [frontend/index.html](frontend/index.html#L1-L20) and [frontend/src/index.jsx](frontend/src/index.jsx#L1-L20)
-- Unused files you may remove: [frontend/src/index.js](frontend/src/index.js#L1-L20), [frontend/src/reportWebVitals.js](frontend/src/reportWebVitals.js#L1-L13), [frontend/src/setupTests.js](frontend/src/setupTests.js#L1-L3)
-
-If you want, I can: remove the unused files, add a `test` script and minimal Jest/Vitest setup, or create a small `.env.example` for the backend. Which would you like next?
