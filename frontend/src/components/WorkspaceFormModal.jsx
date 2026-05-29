@@ -36,7 +36,7 @@ export const WorkspaceFormModal = ({
 
   return (
     <div className="modal-overlay z-[210]" onClick={onClose}>
-      <div className="modal-content p-6 max-w-md" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content p-6 max-w-lg" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="m-0 text-lg font-bold text-text-primary">
             {mode === 'edit' ? 'Edit Workspace' : 'New Workspace'}

@@ -282,6 +282,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
               ) : (
                 <NoteList
                   notes={notes}
+                  workspace={selectedWorkspace}
                   onNoteClick={setSelectedNote}
                   onNoteDeleted={handleNoteDeleted}
                   onNoteUpdated={handleNoteUpdated}
@@ -324,6 +325,7 @@ export const Workspace = ({ onCreateNote, onEditNote }) => {
 
       <NoteDetailModal
         note={selectedNote}
+        workspace={selectedWorkspace}
         workspaceName={selectedWorkspace?.name}
         isOpen={Boolean(selectedNote)}
         onClose={() => setSelectedNote(null)}

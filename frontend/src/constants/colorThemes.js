@@ -124,3 +124,13 @@ export const getThemeSwatchStyle = (themeId) => {
     border: `1px solid ${theme.border}`,
   };
 };
+
+export const resolveNoteThemeWithWorkspace = (note, workspace) => {
+  if (workspace) {
+    const workspaceThemeId = resolveWorkspaceThemeId(workspace);
+    if (workspaceThemeId && workspaceThemeId !== DEFAULT_THEME_ID) {
+      return workspaceThemeId;
+    }
+  }
+  return resolveNoteThemeId(note);
+};

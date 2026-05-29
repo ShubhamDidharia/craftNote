@@ -2,9 +2,9 @@ import React from 'react';
 import { Pin, PinOff, Trash2, StickyNote } from 'lucide-react';
 import { noteService } from '../services/noteService';
 import { showToast } from '../utils/toast';
-import { getNoteThemeStyle, getThemeById, resolveNoteThemeId } from '../constants/colorThemes';
+import { getNoteThemeStyle, getThemeById, resolveNoteThemeId, resolveNoteThemeWithWorkspace } from '../constants/colorThemes';
 
-export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated }) => {
+export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated, workspaceMap, workspace }) => {
   const handleDelete = async (e, noteId) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this note?')) return;
@@ -44,15 +44,19 @@ export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated }) =
 
   const renderGrid = (list) => (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
-      {list.map((note) => (
-        <NoteCard
-          key={note._id}
-          note={note}
-          onClick={() => onNoteClick?.(note)}
-          onDelete={(e) => handleDelete(e, note._id)}
-          onTogglePin={(e) => handleTogglePin(e, note)}
-        />
-      ))}
+      {list.map((note) => {
+        const noteWorkspace = workspace || workspaceMap?.[note.workspaceId?._id || note.workspaceId];
+        return (
+          <NoteCard
+            key={note._id}
+            note={note}
+            workspace={noteWorkspace}
+            onClick={() => onNoteClick?.(note)}
+            onDelete={(e) => handleDelete(e, note._id)}
+            onTogglePin={(e) => handleTogglePin(e, note)}
+          />
+        );
+      })}
     </div>
   );
 
@@ -79,9 +83,17 @@ export const NoteList = ({ notes, onNoteClick, onNoteDeleted, onNoteUpdated }) =
   );
 };
 
-const NoteCard = ({ note, onClick, onDelete, onTogglePin }) => {
-  const theme = getThemeById(resolveNoteThemeId(note));
-  const themeStyle = getNoteThemeStyle(note);
+const NoteCard = ({ note, workspace, onClick, onDelete, onTogglePin }) => {
+  const themeId = resolveNoteThemeWithWorkspace(note, workspace);
+  const theme = getThemeById(themeId);
+  const themeStyle = {
+    backgroundColor: theme.background,
+    color: theme.text,
+    borderColor: theme.border,
+    '--note-muted': theme.muted,
+    '--note-tag-bg': theme.tagBg,
+    '--note-border': theme.border,
+  };
   const contentPreview = (note.content || '').substring(0, 100).replace(/\n/g, ' ');
   const hasMore = (note.content || '').length > 100;
 

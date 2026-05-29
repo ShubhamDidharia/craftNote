@@ -28,7 +28,7 @@ export const Home = ({ user, onEditNote }) => {
 
       const map = {};
       (workspacesData.workspaces || []).forEach((ws) => {
-        map[ws._id] = ws.name;
+        map[ws._id] = ws;
       });
       setWorkspaceMap(map);
 
@@ -48,7 +48,7 @@ export const Home = ({ user, onEditNote }) => {
 
   const getWorkspaceName = (note) => {
     const id = note.workspaceId?._id || note.workspaceId;
-    return workspaceMap[id] || 'Workspace';
+    return workspaceMap[id]?.name || 'Workspace';
   };
 
   const handleNoteDeleted = (noteId) => {
@@ -104,6 +104,7 @@ export const Home = ({ user, onEditNote }) => {
           </h3>
           <NoteList
             notes={allNotes}
+            workspaceMap={workspaceMap}
             onNoteClick={setSelectedNote}
             onNoteDeleted={handleNoteDeleted}
             onNoteUpdated={handleNoteUpdated}
@@ -119,6 +120,7 @@ export const Home = ({ user, onEditNote }) => {
 
       <NoteDetailModal
         note={selectedNote}
+        workspace={selectedNote ? workspaceMap[selectedNote.workspaceId?._id || selectedNote.workspaceId] : null}
         workspaceName={selectedNote ? getWorkspaceName(selectedNote) : ''}
         isOpen={Boolean(selectedNote)}
         onClose={() => setSelectedNote(null)}

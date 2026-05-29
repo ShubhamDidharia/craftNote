@@ -4,7 +4,7 @@ import { COLOR_THEMES } from '../constants/colorThemes';
 export const ThemePicker = ({ value, onChange, disabled = false }) => (
   <div>
     <p className="m-0 mb-2 text-xs font-semibold text-gray-600">Color theme</p>
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-3 gap-2">
       {COLOR_THEMES.map((theme) => (
         <button
           key={theme.id}

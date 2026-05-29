@@ -14,7 +14,7 @@ import { showToast } from '../utils/toast';
 import { GenerateTitleModal } from './ai/GenerateTitleModal';
 import { WritingHelpModal } from './ai/WritingHelpModal';
 import { VerifyContentPanel } from './ai/VerifyContentPanel';
-import { DEFAULT_THEME_ID, resolveNoteThemeId } from '../constants/colorThemes';
+import { DEFAULT_THEME_ID } from '../constants/colorThemes';
 
 export const NoteEditorPage = ({
   mode = 'create',
@@ -88,7 +88,6 @@ export const NoteEditorPage = ({
           title: title.trim(),
           content,
           tags: tagsArray,
-          colorTheme: resolveNoteThemeId(note),
         });
         savedNote = response.note;
         showToast.success('Note updated successfully');

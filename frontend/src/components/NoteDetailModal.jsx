@@ -9,13 +9,13 @@ import {
   Tag,
 } from 'lucide-react';
 import {
-  getNoteThemeStyle,
   getThemeById,
-  resolveNoteThemeId,
+  resolveNoteThemeWithWorkspace,
 } from '../constants/colorThemes';
 
 export const NoteDetailModal = ({
   note,
+  workspace,
   workspaceName,
   isOpen,
   onClose,
@@ -25,8 +25,16 @@ export const NoteDetailModal = ({
 }) => {
   if (!isOpen || !note) return null;
 
-  const theme = getThemeById(resolveNoteThemeId(note));
-  const themeStyle = getNoteThemeStyle(note);
+  const themeId = resolveNoteThemeWithWorkspace(note, workspace);
+  const theme = getThemeById(themeId);
+  const themeStyle = {
+    backgroundColor: theme.background,
+    color: theme.text,
+    borderColor: theme.border,
+    '--note-muted': theme.muted,
+    '--note-tag-bg': theme.tagBg,
+    '--note-border': theme.border,
+  };
 
   return (
     <div className="modal-overlay z-[200]" onClick={onClose}>

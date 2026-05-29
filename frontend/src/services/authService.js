@@ -1,60 +1,35 @@
+import axios from 'axios';
+
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/auth`;
 
-const parseResponse = async (response) => {
-  const text = await response.text();
-  if (!text) {
-    return {};
-  }
-  try {
-    return JSON.parse(text);
-  } catch {
-    console.error('[authService] Non-JSON response', {
-      status: response.status,
-      body: text.slice(0, 200),
-    });
-    throw new Error(
-      response.ok
-        ? 'Invalid response from server'
-        : `Server error (${response.status}). Is the backend running on port 5000?`
-    );
-  }
-};
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export const authService = {
   signup: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await parseResponse(response);
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Signup failed');
+    try {
+      const response = await api.post('/signup', userData);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Signup failed');
     }
-
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
   },
 
   signin: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await parseResponse(response);
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Signin failed');
+    try {
+      const response = await api.post('/signin', credentials);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Signin failed');
     }
-
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
   },
 
   logout: () => {
@@ -85,25 +60,20 @@ export const authService = {
       throw new Error('No token found');
     }
 
-    const response = await fetch(`${API_BASE_URL}/me`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await parseResponse(response);
-
-    if (!response.ok) {
-      if (response.status === 401) {
+    try {
+      const response = await api.get('/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data.user;
+    } catch (error) {
+      if (error.response?.status === 401) {
         authService.logout();
       }
-      throw new Error(data.error || 'Failed to fetch user');
+      throw new Error(error.response?.data?.error || 'Failed to fetch user');
     }
-
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data.user;
   },
 
   updateProfile: async (profileData) => {
@@ -112,23 +82,17 @@ export const authService = {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_BASE_URL}/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(profileData),
-    });
-
-    const data = await parseResponse(response);
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to update profile');
+    try {
+      const response = await api.put('/profile', profileData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data.user;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Failed to update profile');
     }
-
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data.user;
   },
 
   deleteAccount: async (password) => {
@@ -137,22 +101,17 @@ export const authService = {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_BASE_URL}/account`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ password }),
-    });
-
-    const data = await parseResponse(response);
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to delete account');
+    try {
+      const response = await api.delete('/account', {
+        data: { password },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      authService.logout();
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Failed to delete account');
     }
-
-    authService.logout();
-    return data;
   },
 };
